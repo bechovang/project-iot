@@ -1,0 +1,13 @@
+VIN  : 3v3
+GND  : GND
+GAIN : GND
+DIN  : GPIO25   (= D4 tren board)
+BCLK : GPIO26   (= D5 tren board)
+LRC  : GPIO27   (= D6 tren board)
+Loa  : SPK+ / SPK-
+
+=== PHAT MP3 TU FLASH (LittleFS) ===
+1. File am thanh: data/song.mp3  (da nen xuong ~1.7MB, 64kbps)
+2. Upload FILESYSTEM truoc  (PlatformIO -> "Upload Filesystem Image"  /  pio run -t uploadfs)
+3. Upload CODE              (Upload thuong  /  pio run -t upload)
+4. Reset -> nghe nhac. Volume = 8/21 (sua #define VOLUME trong main.cpp neu can).
