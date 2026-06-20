@@ -151,8 +151,9 @@ async def device_current():
         return {"has_order": False}
     
     # Generate public short URL for ESP32 QR display
-    # PUBLIC_BASE_URL contains the ngrok endpoint
-    short_url = f"{PUBLIC_BASE_URL}/q/{o['queue_no']}" if PUBLIC_BASE_URL else f"http://127.0.0.1:8000/q/{o['queue_no']}"
+    # PUBLIC_BASE_URL contains the ngrok endpoint from payos_client
+    pub_url = payos_client.PUBLIC_BASE_URL
+    short_url = f"{pub_url}/q/{o['queue_no']}" if pub_url else f"http://127.0.0.1:8000/q/{o['queue_no']}"
     
     return {
         "has_order": True,
