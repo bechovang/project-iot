@@ -49,6 +49,7 @@ void setup() {
 
   if (net_connected()) {
     oled_message("San sang", "Cho don hang");
+    audio_announce_amount(999); // Am thanh test loa luc khoi dong: "Da nhan duoc chin tram chin muoi chin dong"
   } else {
     oled_message("WiFi loi", "Kiem tra SSID");
   }
