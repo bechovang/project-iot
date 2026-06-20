@@ -42,28 +42,73 @@ static String fmt_money(unsigned long amount) {
   return out + "d";
 }
 
+static bool is_str_alphanumeric(const char* text) {
+  size_t len = strlen(text);
+  for (size_t i = 0; i < len; i++) {
+    char c = text[i];
+    if (c >= '0' && c <= '9') continue;
+    if (c >= 'A' && c <= 'Z') continue;
+    if (c == ' ' || c == '$' || c == '%' || c == '*' || c == '+' || c == '-' || c == '.' || c == '/' || c == ':') continue;
+    return false;
+  }
+  return true;
+}
+
 void oled_show_qr(const char* qr_payload, unsigned long amount, int queue_no) {
-  // PayOS QR ~120-180 ky tu (byte mode). Chon version nho nhat du chua,
-  // toi da version 11 (61x61 module) van vua chieu cao OLED 64px.
-  //   v8=49x49 (<=152B), v9=53x53, v10=57x57, v11=61x61 (<=287B) o ECC_LOW
-  size_t len = strlen(qr_payload);
-  uint8_t version = 8;
-  if (len > 152) version = 9;
-  if (len > 180) version = 10;
-  if (len > 213) version = 11;
+  // Convert payload to uppercase to unlock high-efficiency Alphanumeric mode
+  String payload_upper = String(qr_payload);
+  payload_upper.toUpperCase();
+  const char* final_payload = payload_upper.c_str();
+
+  // If converting to uppercase doesn't yield an alphanumeric string (e.g. contains custom URL symbols),
+  // fallback to the original payload to preserve case-sensitive URLs
+  bool is_alpha = is_str_alphanumeric(final_payload);
+  if (!is_alpha) {
+    final_payload = qr_payload;
+  }
+
+  size_t len = strlen(final_payload);
+  uint8_t version = 1;
+
+  // Select safe minimum version depending on encoding mode to prevent stack overflow in qrcode library
+  if (is_alpha) {
+    if (len <= 25) version = 1;
+    else if (len <= 47) version = 2;
+    else if (len <= 77) version = 3;
+    else if (len <= 114) version = 4;
+    else if (len <= 154) version = 5;
+    else if (len <= 195) version = 6;
+    else if (len <= 224) version = 7;
+    else if (len <= 279) version = 8;
+    else version = 9;
+  } else {
+    if (len <= 17) version = 1;
+    else if (len <= 32) version = 2;
+    else if (len <= 53) version = 3;
+    else if (len <= 78) version = 4;
+    else if (len <= 106) version = 5;
+    else if (len <= 134) version = 6;
+    else if (len <= 154) version = 7;
+    else if (len <= 192) version = 8;
+    else if (len <= 230) version = 9;
+    else if (len <= 271) version = 10;
+    else version = 11;
+  }
 
   QRCode qrcode;
   uint8_t qrData[qrcode_getBufferSize(11)];   // buffer du cho version cao nhat
   // Thu init, neu fail (chuoi dai hon du tinh) thi tang version dan
-  while (qrcode_initText(&qrcode, qrData, version, ECC_LOW, qr_payload) != 0 && version < 11) {
+  while (qrcode_initText(&qrcode, qrData, version, ECC_LOW, final_payload) != 0 && version < 11) {
     version++;
   }
 
   u8g2.clearBuffer();
 
-  // QR ben trai, ve voi 1 pixel / module (49x49 < 64 -> vua chieu cao)
+  // QR ben trai, ve voi ti le phu hop voi chieu cao OLED 64px
   int qsize = qrcode.size;        // so module 1 chieu
-  int scale = 1;
+  if (qsize <= 0) qsize = 1;      // Prevent division by zero
+  int scale = 64 / qsize;
+  if (scale < 1) scale = 1;
   int qpx = qsize * scale;
   int ox = 2;
   int oy = (64 - qpx) / 2;
