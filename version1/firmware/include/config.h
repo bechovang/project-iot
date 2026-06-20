@@ -27,4 +27,9 @@
 #define I2S_LRC         27
 #define AUDIO_VOLUME    21       // 0..21
 
+// --- Dual-core parameters ---
+#define HTTP_TIMEOUT_MS   3000     // timeout goi HTTP (giam xuong 3s)
+#define NET_TASK_STACK    10240    // stack size cho NetworkTask (10KB)
+#define NET_TASK_CORE     0        // Core gan cho NetworkTask (Core 0)
+
 #endif // CONFIG_H

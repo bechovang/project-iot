@@ -43,17 +43,7 @@ static bool json_bool(const String& body, const char* key) {
 void net_init() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
-  Serial.printf("[NET] connecting to %s", WIFI_SSID);
-  unsigned long t0 = millis();
-  while (WiFi.status() != WL_CONNECTED && millis() - t0 < 20000) {
-    delay(400);
-    Serial.print(".");
-  }
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.printf("\n[NET] connected, IP=%s\n", WiFi.localIP().toString().c_str());
-  } else {
-    Serial.println("\n[NET] WiFi connect FAILED (se thu lai trong loop)");
-  }
+  Serial.printf("[NET] WiFi initiated to connect to %s (connecting in background)\n", WIFI_SSID);
 }
 
 bool net_connected() {
@@ -65,7 +55,7 @@ static bool http_get(const char* path, String& out) {
   HTTPClient http;
   String url = String(SERVER_BASE_URL) + path;
   http.begin(url);
-  http.setTimeout(4000);
+  http.setTimeout(HTTP_TIMEOUT_MS);
   int code = http.GET();
   bool ok = false;
   if (code == 200) {
