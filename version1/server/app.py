@@ -119,6 +119,27 @@ async def payos_webhook(req: Request):
     return {"error": 0, "message": "ok"}
 
 
+@app.get("/q/{queue_no}")
+async def redirect_short_link(queue_no: int):
+    """Chuyen huong tu link rut gon tren ESP32 sang trang thanh toan PayOS thuc te."""
+    with store._lock:
+        cur = store._conn.execute(
+            "SELECT checkout_url FROM orders WHERE queue_no = ? AND status = 'PENDING' ORDER BY created_at DESC LIMIT 1",
+            (queue_no,)
+        )
+        row = cur.fetchone()
+        if not row:
+            cur = store._conn.execute(
+                "SELECT checkout_url FROM orders WHERE queue_no = ? ORDER BY created_at DESC LIMIT 1",
+                (queue_no,)
+            )
+            row = cur.fetchone()
+        
+        if row and row["checkout_url"]:
+            return RedirectResponse(url=row["checkout_url"])
+    raise HTTPException(status_code=404, detail="Order not found")
+
+
 # ----------------------------------------------------------------------------
 #  THIET BI ESP32 (LAN polling)
 # ----------------------------------------------------------------------------
@@ -128,11 +149,16 @@ async def device_current():
     o = store.latest_pending()
     if not o:
         return {"has_order": False}
+    
+    # Generate public short URL for ESP32 QR display
+    # PUBLIC_BASE_URL contains the ngrok endpoint
+    short_url = f"{PUBLIC_BASE_URL}/q/{o['queue_no']}" if PUBLIC_BASE_URL else f"http://127.0.0.1:8000/q/{o['queue_no']}"
+    
     return {
         "has_order": True,
         "order_code": o["order_code"],
         "amount": o["amount"],
-        "qr_code": o["qr_code"],
+        "qr_code": short_url,
         "queue_no": o["queue_no"],
     }
 

@@ -127,14 +127,19 @@ void oled_show_qr(const char* qr_payload, unsigned long amount, int queue_no) {
   // Thong tin ben phai
   int tx = ox + qpx + 6;
   if (tx > 70) tx = 70;
+  
+  u8g2.setFont(u8g2_font_5x8_tf);
+  u8g2.drawStr(tx, 8, "QUET BANG:");
+  u8g2.drawStr(tx, 18, "CAMERA/ZALO");
+  
   u8g2.setFont(u8g2_font_6x10_tf);
-  u8g2.drawStr(tx, 12, "QUET QR");
   char buf[24];
-  snprintf(buf, sizeof(buf), "#%d", queue_no);
-  u8g2.drawStr(tx, 28, buf);
+  snprintf(buf, sizeof(buf), "Don #%d", queue_no);
+  u8g2.drawStr(tx, 32, buf);
+  
   u8g2.setFont(u8g2_font_6x12_tf);
   String m = fmt_money(amount);
-  u8g2.drawStr(tx, 46, m.c_str());
+  u8g2.drawStr(tx, 48, m.c_str());
 
   u8g2.sendBuffer();
 }
