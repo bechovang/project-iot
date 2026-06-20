@@ -1,9 +1,8 @@
-# 08 - Dual-Core Architecture (Thiet ke - lam sau)
+# 08 - Dual-Core Architecture
 
-> **Trang thai: THIET KE / CHUA TRIEN KHAI.**
-> Tai lieu nay mo ta day du kien truc dual-core du dinh ap dung cho firmware ESP32.
-> Firmware hien tai (ban single-loop) van dang chay. Doc nay de tri+en khai sau,
-> KHONG anh huong server (server giu nguyen 100%).
+> **Trạng thái: ĐÃ TRIỂN KHAI.**
+> Tài liệu này mô tả chi tiết kiến trúc dual-core đã được áp dụng thành công cho firmware ESP32.
+> Việc triển khai này giúp tối ưu hóa phần cứng và ngăn ngừa hoàn toàn tình trạng rè/gián đoạn âm thanh, không ảnh hưởng đến server (giữ nguyên 100%).
 
 ## 1. Tai sao can dual-core
 

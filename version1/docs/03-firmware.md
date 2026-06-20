@@ -113,15 +113,17 @@ firmware/
 ├─ platformio.ini      <- cau hinh build, thu vien
 ├─ partitions.csv      <- phan vung flash (app + LittleFS)
 ├─ include/            <- header (khai bao ham)
-│   ├─ config.h
+│   ├─ config.h        (them: cau hinh polling, stack size, core ID)
 │   ├─ oled_ui.h
 │   ├─ audio_vn.h
-│   └─ net_client.h
+│   ├─ net_client.h    (chi lam nhiem vu goi HTTP thuan)
+│   └─ sync_state.h    (MOI: khai bao struct shared state + accessor mutex/queue)
 ├─ src/                <- trien khai
-│   ├─ main.cpp        <- vong lap chinh, dieu phoi
-│   ├─ oled_ui.cpp     <- ve QR + man hinh OLED
+│   ├─ main.cpp        (sua: tao NetworkTask, loop chi con UI + Audio)
+│   ├─ oled_ui.cpp     <- ve QR (zoom x2 alphanumeric) + OLED
 │   ├─ audio_vn.cpp    <- doc so tien tieng Viet
-│   └─ net_client.cpp  <- WiFi + HTTP poll + parse JSON
+│   ├─ net_client.cpp  (sua: bo blocking trong loop, ket noi WiFi background)
+│   └─ sync_state.cpp  (MOI: mutex cho current order, queue cho paid events)
 └─ data/               <- MP3 (nap vao LittleFS)
 ```
 
@@ -145,24 +147,21 @@ lib_deps =
 ### 6.2. `partitions.csv`
 Chia flash 4MB: app (factory) ~1.75MB + LittleFS ~2.19MB cho MP3.
 
-### 6.3. `main.cpp` - vong lap chinh
-- `setup()`: init OLED -> init audio (mount LittleFS + I2S) -> noi WiFi -> hien "San sang".
-- `loop()`:
-  1. `audio_loop()` luon chay (bom du lieu MP3).
-  2. Neu dang hien man "THANH CONG": cho >= 4s va loa doc xong moi quay ve.
-  3. Poll `/api/device/paid-event`: co don PAID -> hien "THANH CONG" + doc loa.
-  4. Poll `/api/device/current`: co don PENDING -> ve QR (chi ve lai khi QR doi).
-
-Trang thai noi bo:
-- `showing_qr`: dang hien QR.
-- `showing_paid` + `paid_until`: dang hien man thanh cong den thoi diem nao.
+### 6.3. `main.cpp` - vong lap chinh (Dual-Core)
+- `setup()`: Khởi tạo phần cứng -> Khởi tạo `sync_state` -> Tạo `NetworkTask` chạy ngầm trên **Core 0** -> Luồng `loop()` chính thức chạy độc lập trên **Core 1**.
+- `loop()` (Core 1):
+  1. `audio_loop()` luôn chạy để bom dữ liệu âm thanh số (đảm bảo không bao giờ trễ tiếng).
+  2. Nếu đang hiện màn "THANH CONG": chờ >= 4s và loa đọc xong mới quay về.
+  3. Lấy sự kiện đã thanh toán từ `paid-event` queue: hiển thị "THANH CONG" + phát loa.
+  4. Theo dõi WiFi (`g_wifi_connected`) để vẽ trạng thái thích hợp.
+  5. Lấy thông tin đơn hàng hiện tại từ `sync_state` bằng cơ chế loại trừ tương hỗ (Mutex) -> hiển thị QR Code (Zoom x2).
 
 ### 6.4. `oled_ui.cpp` - hien thi
 - Dung U8g2 full frame buffer (ESP32 du RAM).
-- `oled_show_qr()`: sinh QR tu chuoi EMVCo cua PayOS bang thu vien QRCode.
-  - Chon QR version theo do dai chuoi (8..11). PayOS thuong ~129 ky tu -> version 8 (49x49).
-  - Ve 1 pixel / 1 module -> 49..61 px, vua chieu cao OLED 64px.
-  - Ben phai QR hien "QUET QR", so thu tu `#n`, so tien.
+- `oled_show_qr()`: sinh QR tu link rut gon cua PayOS (`https://.../q/{no}`).
+  - Chuyển URL sang dạng in hoa để tự động kích hoạt **Alphanumeric Mode** giúp tối ưu hóa số lượng ô vuông (giảm xuống Version 3 - 29x29 ô vuông).
+  - Tự động phóng to lên **`scale = 2`** (58x58 pixel) giúp quét cực kỳ nhạy và nét trên OLED 64px.
+  - Ben phai QR hien chu "QUET BANG: CAMERA/ZALO", so thu tu `#n`, so tien.
 - `oled_message()`: man hinh 1-2 dong can giua (San sang / Khoi dong...).
 - `oled_show_paid()`: man "THANH CONG" + so don + so tien.
 
@@ -174,10 +173,15 @@ Xem chi tiet o `05-doc-so-tien.md`. Tom tat:
   chuyen file ke tiep.
 
 ### 6.6. `net_client.cpp` - mang
-- `net_init()`: noi WiFi STA (timeout 20s).
-- `http_get()`: GET 1 endpoint, tra ve body chuoi.
+- `net_init()`: khởi tạo luồng kết nối WiFi STA (không chặn tiến trình khởi động).
+- `http_get()`: thực hiện gọi HTTP thô sơ và tối giản để tránh gây tốn bộ nhớ Stack của hệ thống mạng.
 - Parse JSON **thu cong** (khong dung ArduinoJson) bang cac ham `json_str/json_num/json_bool`
   vi du lieu backend don gian, co dinh key. Giam phu thuoc thu vien.
+
+### 6.7. `sync_state.cpp` - Dong bo hoa chia se du lieu (Core 0 <-> Core 1)
+- **Mutex (`g_current_mutex`)**: Đảm bảo an toàn luồng dữ liệu khi đọc và viết thông tin đơn hàng hiện tại `CurrentState` (tránh hiện tượng tranh chấp bộ nhớ khi copy chuỗi QR Code).
+- **Queue (`g_paid_queue`)**: Hàng đợi FreeRTOS dài 8 phần tử, dùng để lưu trữ các sự kiện thanh toán thành công được nhận về từ NetworkTask (Core 0) và truyền an toàn sang Core 1 xử lý đọc loa, tránh mất mát sự kiện.
+- **`g_wifi_connected`**: Biến kiểu nguyên thủy (`volatile bool`) thể hiện trạng thái kết nối WiFi thời gian thực của thiết bị.
 - `net_get_current()`, `net_get_paid_event()`: bao state ve cho main.
 
 ## 7. Tuy chinh thuong gap
