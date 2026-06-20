@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="900" height="560" fill="#0f172a"/>
+  <text x="450" y="34" fill="#e2e8f0" font-size="22" font-weight="700" text-anchor="middle">Smart QR Payment - So do dau day ESP32</text>
+  <text x="450" y="56" fill="#94a3b8" font-size="13" text-anchor="middle">OLED SH1106 (I2C 21/22) + MAX98357A (I2S 25/26/27)</text>
+
+  <!-- ESP32 board -->
+  <rect x="360" y="110" width="180" height="360" rx="12" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+  <text x="450" y="140" fill="#e2e8f0" font-size="18" font-weight="700" text-anchor="middle">ESP32</text>
+  <text x="450" y="158" fill="#64748b" font-size="11" text-anchor="middle">DevKit</text>
+  <rect x="420" y="440" width="60" height="22" rx="4" fill="#334155"/>
+  <text x="450" y="456" fill="#94a3b8" font-size="11" text-anchor="middle">USB</text>
+
+  <!-- ESP32 left pins -->
+  <g font-size="12" fill="#e2e8f0" text-anchor="end">
+    <circle cx="360" cy="185" r="5" fill="#f59e0b"/><text x="350" y="189">3V3</text>
+    <circle cx="360" cy="215" r="5" fill="#64748b"/><text x="350" y="219">GND</text>
+    <circle cx="360" cy="245" r="5" fill="#64748b"/><text x="350" y="249">GND</text>
+  </g>
+  <!-- ESP32 right pins -->
+  <g font-size="12" fill="#e2e8f0" text-anchor="start">
+    <circle cx="540" cy="185" r="5" fill="#38bdf8"/><text x="550" y="189">GPIO21 (SDA)</text>
+    <circle cx="540" cy="215" r="5" fill="#38bdf8"/><text x="550" y="219">GPIO22 (SCL)</text>
+    <circle cx="540" cy="285" r="5" fill="#34d399"/><text x="550" y="289">GPIO25 (DIN)</text>
+    <circle cx="540" cy="315" r="5" fill="#34d399"/><text x="550" y="319">GPIO26 (BCLK)</text>
+    <circle cx="540" cy="345" r="5" fill="#34d399"/><text x="550" y="349">GPIO27 (LRC)</text>
+  </g>
+
+  <!-- OLED -->
+  <rect x="660" y="120" width="200" height="150" rx="10" fill="#0b3b52" stroke="#38bdf8" stroke-width="2"/>
+  <text x="760" y="146" fill="#e2e8f0" font-size="16" font-weight="700" text-anchor="middle">OLED SH1106</text>
+  <text x="760" y="164" fill="#7dd3fc" font-size="11" text-anchor="middle">128x64 I2C (0x3C)</text>
+  <g font-size="12" fill="#e2e8f0" text-anchor="start">
+    <circle cx="660" cy="195" r="5" fill="#f59e0b"/><text x="672" y="199">VCC</text>
+    <circle cx="660" cy="215" r="5" fill="#64748b"/><text x="672" y="219">GND</text>
+    <circle cx="660" cy="235" r="5" fill="#38bdf8"/><text x="672" y="239">SDA</text>
+    <circle cx="660" cy="255" r="5" fill="#38bdf8"/><text x="672" y="259">SCL</text>
+  </g>
+
+  <!-- MAX98357A -->
+  <rect x="660" y="300" width="200" height="190" rx="10" fill="#0b3b2e" stroke="#34d399" stroke-width="2"/>
+  <text x="760" y="326" fill="#e2e8f0" font-size="16" font-weight="700" text-anchor="middle">MAX98357A</text>
+  <text x="760" y="344" fill="#6ee7b7" font-size="11" text-anchor="middle">I2S Amplifier</text>
+  <g font-size="12" fill="#e2e8f0" text-anchor="start">
+    <circle cx="660" cy="372" r="5" fill="#f59e0b"/><text x="672" y="376">VIN</text>
+    <circle cx="660" cy="392" r="5" fill="#64748b"/><text x="672" y="396">GND</text>
+    <circle cx="660" cy="412" r="5" fill="#64748b"/><text x="672" y="416">GAIN</text>
+    <circle cx="660" cy="432" r="5" fill="#34d399"/><text x="672" y="436">DIN</text>
+    <circle cx="660" cy="452" r="5" fill="#34d399"/><text x="672" y="456">BCLK</text>
+    <circle cx="660" cy="472" r="5" fill="#34d399"/><text x="672" y="476">LRC</text>
+  </g>
+  <!-- Speaker -->
+  <rect x="700" y="500" width="120" height="40" rx="6" fill="#1e293b" stroke="#475569"/>
+  <text x="760" y="525" fill="#cbd5e1" font-size="12" text-anchor="middle">LOA 4-8 ohm</text>
+  <line x1="760" y1="490" x2="760" y2="500" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Wires OLED -->
+  <path d="M360 185 H 120 V 195 H 660" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <path d="M360 215 H 140 V 215 H 660" fill="none" stroke="#64748b" stroke-width="2"/>
+  <path d="M540 185 C 600 185, 600 235, 660 235" fill="none" stroke="#38bdf8" stroke-width="2"/>
+  <path d="M540 215 C 610 215, 610 255, 660 255" fill="none" stroke="#38bdf8" stroke-width="2"/>
+
+  <!-- Wires MAX (power reuse 3V3/GND rails) -->
+  <path d="M120 195 V 372 H 660" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <path d="M140 215 V 392 H 660" fill="none" stroke="#64748b" stroke-width="2"/>
+  <path d="M140 392 H 600 V 412 H 660" fill="none" stroke="#64748b" stroke-width="2"/>
+  <path d="M540 285 C 610 285, 610 432, 660 432" fill="none" stroke="#34d399" stroke-width="2"/>
+  <path d="M540 315 C 605 315, 605 452, 660 452" fill="none" stroke="#34d399" stroke-width="2"/>
+  <path d="M540 345 C 600 345, 600 472, 660 472" fill="none" stroke="#34d399" stroke-width="2"/>
+
+  <!-- Legend -->
+  <g font-size="12">
+    <rect x="40" y="470" width="280" height="70" rx="8" fill="#1e293b" stroke="#475569"/>
+    <circle cx="58" cy="490" r="5" fill="#f59e0b"/><text x="70" y="494" fill="#e2e8f0">3V3 (nguon)</text>
+    <circle cx="58" cy="510" r="5" fill="#64748b"/><text x="70" y="514" fill="#e2e8f0">GND</text>
+    <circle cx="190" cy="490" r="5" fill="#38bdf8"/><text x="202" y="494" fill="#e2e8f0">I2C (OLED)</text>
+    <circle cx="190" cy="510" r="5" fill="#34d399"/><text x="202" y="514" fill="#e2e8f0">I2S (Loa)</text>
+  </g>
+  <text x="60" y="135" fill="#fca5a5" font-size="12">Chan SD cua MAX98357A: DE TRONG</text>
+</svg>

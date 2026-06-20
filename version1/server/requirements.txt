@@ -1,0 +1,9 @@
+﻿# Smart QR Payment - Server (backend FastAPI + cashier Streamlit)
+# Dung PayOS SDK ban cu 0.1.4 (giong demo Django)
+
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+python-dotenv==1.0.1
+requests==2.31.0
+streamlit==1.33.0
+payos==0.1.4

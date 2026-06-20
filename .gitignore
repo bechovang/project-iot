@@ -19,3 +19,12 @@
 # OS/System files
 .DS_Store
 Thumbs.db
+
+# Python venv / cache / secrets
+**/venv/
+**/__pycache__/
+*.pyc
+**/.env
+
+# SQLite db
+**/orders.db
