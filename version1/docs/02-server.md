@@ -188,12 +188,22 @@ GET /api/device/current
 Khi co don PENDING:
 ```json
 {"has_order": true, "order_code": 178..., "amount": 11000,
- "qr_code": "0002...", "queue_no": 1}
+ "qr_code": "https://<PUBLIC_BASE_URL>/q/1", "queue_no": 1}
 ```
+*Lưu ý: `qr_code` đã được đổi thành đường dẫn rút gọn của Backend để hỗ trợ hiển thị QR thưa hạt (Zoom x2) trên màn hình OLED.*
+
 Khong co don:
 ```json
 {"has_order": false}
 ```
+
+### 7.6b. Redirect link rút gọn
+```
+GET /q/{queue_no}
+GET /Q/{queue_no}
+```
+*Tự động chuyển hướng (HTTP 302 Redirect) điện thoại của khách hàng sang trang thanh toán thực tế của PayOS (checkout_url).*
+*(Hỗ trợ cả ký tự thường /q/ và chữ hoa /Q/ do ESP32 tự động viết hoa toàn bộ chuỗi QR).*
 
 ### 7.7. ESP32: su kien vua thanh toan (tra 1 lan)
 ```
