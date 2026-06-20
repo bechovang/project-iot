@@ -119,9 +119,10 @@ async def payos_webhook(req: Request):
     return {"error": 0, "message": "ok"}
 
 
+@app.get("/Q/{queue_no}")
 @app.get("/q/{queue_no}")
 async def redirect_short_link(queue_no: int):
-    """Chuyen huong tu link rut gon tren ESP32 sang trang thanh toan PayOS thuc te."""
+    """Chuyen huong tu link rut gon tren ESP32 sang trang thanh toan PayOS thuc te (chap nhan ca chu hoa Q do ESP32 viet hoa)."""
     with store._lock:
         cur = store._conn.execute(
             "SELECT checkout_url FROM orders WHERE queue_no = ? AND status = 'PENDING' ORDER BY created_at DESC LIMIT 1",
