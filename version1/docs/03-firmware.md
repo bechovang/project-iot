@@ -73,7 +73,16 @@ pio device monitor -b 115200
 [AUDIO] I2S ready
 [NET] connecting to TenWifi....
 [NET] connected, IP=192.168.1.77
+[AUDIO] play: /da_nhan_duoc.mp3
+[AUDIO] play: /chin.mp3
+[AUDIO] play: /tram.mp3
+[AUDIO] play: /chin.mp3
+[AUDIO] play: /muoi.mp3
+[AUDIO] play: /chin.mp3
+[AUDIO] done
 ```
+*Lưu ý: Thiết bị sẽ tự động phát âm thanh thông báo 999đ ngay sau khi khởi động để giúp bạn kiểm tra nhanh tình trạng hoạt động của Loa.*
+
 Sau do khi co don:
 ```
 [MAIN] show QR #1 amount=11000 len=129
