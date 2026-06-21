@@ -11,7 +11,7 @@
 
 // --- Server backend (FastAPI) tren LAN ---
 //  Vi du PC chay server co IP 192.168.1.4 -> "http://192.168.1.4:8000"
-#define SERVER_BASE_URL "http://192.168.1.4:8000"
+#define SERVER_BASE_URL "http://bechovang.loca.lt"
 
 // --- Chu ky poll ---
 #define POLL_CURRENT_MS   1500   // hoi don dang cho de hien QR
@@ -29,7 +29,7 @@
 
 // --- Dual-core parameters ---
 #define HTTP_TIMEOUT_MS   3000     // timeout goi HTTP (giam xuong 3s)
-#define NET_TASK_STACK    10240    // stack size cho NetworkTask (10KB)
+#define NET_TASK_STACK    10240    // stack size cho NetworkTask (10KB - đủ chạy HTTP thường)
 #define NET_TASK_CORE     0        // Core gan cho NetworkTask (Core 0)
 
 #endif // CONFIG_H

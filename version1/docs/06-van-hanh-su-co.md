@@ -53,9 +53,8 @@
 |-------------|-------------|-----------|
 | `[NET] WiFi connect FAILED` | Sai SSID/pass, song yeu | Sua `config.h`, lai gan router |
 | OLED "WiFi loi" | Khong noi duoc WiFi | Nhu tren |
-| Co don nhung OLED khong hien QR | ESP32 khong goi duoc backend | Kiem tra `SERVER_BASE_URL` = IP LAN PC, cung mang, firewall PC mo port 8000 |
-| ESP32 bị khởi động lại liên tục (Reboot/Stack Overflow) | Sử dụng HTTPS ngrok trực tiếp hoặc cấu hình sai QR version gây tràn bộ nhớ Stack | Đảm bảo `SERVER_BASE_URL` trỏ về IP mạng LAN của máy tính dùng HTTP (`http://<IP_LAN>:8000`), không dùng HTTPS trực tiếp trên ESP32 |
-| OLED hien QR nhung dien thoai kho quet | QR nho tren 64px | Lai gan, tang do sang, lau man; hoac quet QR tren TV/Streamlit |
+| ESP32 bị lỗi kết nối SSL / `SSL - The connection indicated an EOF` | Ngrok tự động chuyển hướng sang HTTPS và không tương thích TLS/SSL mbedTLS cũ trên ESP32 | Chuyển sang dùng LocalTunnel (`npx localtunnel --port 8000 --subdomain <tên_miền>`) và trỏ `SERVER_BASE_URL` về `http://<domain>.loca.lt` |
+| ESP32 bị khởi động lại liên tục (Reboot/Stack Overflow) | Cấu hình sai QR version gây tràn bộ nhớ Stack, hoặc kích thước ngăn xếp quá nhỏ | Đảm bảo kích thước ngăn xếp `NET_TASK_STACK` tối thiểu là 10KB (10240) và sử dụng kết nối HTTP thường |
 | Da thanh toan nhung loa khong doc | Chua `uploadfs` / SD noi GND / sai chan I2S | `pio run -t uploadfs`, kiem tra dau day muc 01 |
 | Loa doc lap lai nhieu lan | (Khong nen xay ra) paid-event tra 1 lan | Kiem tra chi 1 ESP32 goi `/api/device/paid-event` |
 

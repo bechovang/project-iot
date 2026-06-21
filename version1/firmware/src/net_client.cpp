@@ -50,19 +50,49 @@ bool net_connected() {
   return WiFi.status() == WL_CONNECTED;
 }
 
+#include <WiFiClientSecure.h>
+
 static bool http_get(const char* path, String& out) {
   if (!net_connected()) return false;
-  HTTPClient http;
+  
   String url = String(SERVER_BASE_URL) + path;
-  http.begin(url);
-  http.setTimeout(HTTP_TIMEOUT_MS);
-  int code = http.GET();
   bool ok = false;
-  if (code == 200) {
-    out = http.getString();
-    ok = true;
+  int code = 0;
+  
+  if (url.startsWith("https://")) {
+    WiFiClientSecure secureClient;
+    secureClient.setInsecure(); // Bỏ qua xác thực SSL
+    HTTPClient http;
+    http.begin(secureClient, url);
+    http.setTimeout(HTTP_TIMEOUT_MS);
+    http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
+    http.addHeader("ngrok-skip-browser-warning", "true");
+    
+    code = http.GET();
+    if (code == 200) {
+      out = http.getString();
+      ok = true;
+    } else {
+      Serial.printf("[NET] GET %s failed (HTTPS), code: %d\n", path, code);
+    }
+    http.end();
+  } else {
+    WiFiClient client;
+    HTTPClient http;
+    http.begin(client, url);
+    http.setTimeout(HTTP_TIMEOUT_MS);
+    http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
+    http.addHeader("ngrok-skip-browser-warning", "true");
+    
+    code = http.GET();
+    if (code == 200) {
+      out = http.getString();
+      ok = true;
+    } else {
+      Serial.printf("[NET] GET %s failed (HTTP), code: %d\n", path, code);
+    }
+    http.end();
   }
-  http.end();
   return ok;
 }
 
