@@ -53,7 +53,7 @@
 |-------------|-------------|-----------|
 | `[NET] WiFi connect FAILED` | Sai SSID/pass, song yeu | Sua `config.h`, lai gan router |
 | OLED "WiFi loi" | Khong noi duoc WiFi | Nhu tren |
-| ESP32 bị lỗi kết nối SSL / `SSL - The connection indicated an EOF` | Ngrok tự động chuyển hướng sang HTTPS và không tương thích TLS/SSL mbedTLS cũ trên ESP32 | Chuyển sang dùng LocalTunnel (`npx localtunnel --port 8000 --subdomain <tên_miền>`) và trỏ `SERVER_BASE_URL` về `http://<domain>.loca.lt` |
+| ESP32 bị lỗi kết nối SSL / `SSL - The connection indicated an EOF` / Mạng chập chờn phản hồi chậm | Ngrok/LocalTunnel tự động chuyển hướng hoặc đi vòng qua Internet gây trễ và dễ lỗi kết nối/SSL | **Khuyên dùng:** Trỏ `SERVER_BASE_URL` trong `config.h` về trực tiếp IP mạng nội bộ (LAN) của PC chạy backend (ví dụ: `http://192.168.137.1:8000` hoặc `http://192.168.1.50:8000`). Tránh dùng URL tunnel cho ESP32. |
 | ESP32 bị khởi động lại liên tục (Reboot/Stack Overflow) | Cấu hình sai QR version gây tràn bộ nhớ Stack, hoặc kích thước ngăn xếp quá nhỏ | Đảm bảo kích thước ngăn xếp `NET_TASK_STACK` tối thiểu là 10KB (10240) và sử dụng kết nối HTTP thường |
 | Da thanh toan nhung loa khong doc | Chua `uploadfs` / SD noi GND / sai chan I2S | `pio run -t uploadfs`, kiem tra dau day muc 01 |
 | Loa doc lap lai nhieu lan | (Khong nen xay ra) paid-event tra 1 lan | Kiem tra chi 1 ESP32 goi `/api/device/paid-event` |

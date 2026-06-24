@@ -39,7 +39,8 @@ Duong dan pio.exe tren Windows (neu chua co trong PATH):
 
 **Bat buoc sua:** `WIFI_SSID`, `WIFI_PASS`, `SERVER_BASE_URL`.
 - ESP32 va PC chay backend phai cung mang WiFi LAN.
-- `SERVER_BASE_URL` la `http://<IP-LAN-cua-PC>:8000`, KHONG phai URL cong khai PayOS.
+- **Khuyên dùng LAN IP:** `SERVER_BASE_URL` nên là `http://<IP-LAN-cua-PC>:8000` (ví dụ: `http://192.168.137.1:8000`), KHONG dùng URL công khai của tunnel (như `.loca.lt` hay `.ngrok-free.dev`) cho ESP32. Việc chạy trực tiếp qua LAN giúp ESP32 gửi nhận request siêu tốc, không phụ thuộc vào đường truyền Internet bên ngoài và loại bỏ hoàn toàn các lỗi kết nối/mạng chập chờn.
+- `SERVER_BASE_URL` KHONG phải URL công khai webhook của PayOS.
 
 ## 3. Nap firmware - 2 buoc
 

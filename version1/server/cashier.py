@@ -227,7 +227,7 @@ with col_right:
                             r = requests.post(f"{BACKEND_URL}/api/orders/{o['order_code']}/status",
                                               json=payload, headers=HEADERS, timeout=10)
                             if r.status_code == 200:
-                                st.toast(f"Hoàn tất đơn #{o['queue_no']}", icon="✓")
+                                st.toast(f"Hoàn tất đơn #{o['queue_no']}", icon="✅")
                                 st.rerun()
                             else:
                                 st.error(f"Lỗi: {r.text}")

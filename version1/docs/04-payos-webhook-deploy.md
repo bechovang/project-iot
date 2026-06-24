@@ -81,14 +81,18 @@ ngrok http 8000 --domain sciatic-cristi-tearfully.ngrok-free.dev
 
 > ⚠️ **Lưu ý quan trọng cho ESP32:** Mặc định ngrok free sẽ tự động chuyển hướng mọi yêu cầu HTTP sang HTTPS. Việc này có thể khiến ESP32 bị lỗi `SSL - The connection indicated an EOF` (lỗi handshake do cấu hình mã hóa ngrok quá mới so với mbedTLS cũ trên ESP32). Để khắc phục, bạn có thể cấu hình tắt chuyển hướng HTTPS trên Dashboard ngrok hoặc dùng giải pháp LocalTunnel bên dưới.
 
-### 5.3. LocalTunnel (Khuyên dùng cho ESP32 - Tên miền cố định miễn phí & Hỗ trợ HTTP)
-LocalTunnel cho phép tự cấu hình Subdomain cố định và hỗ trợ kết nối trực tiếp bằng giao thức HTTP thường (không bị tự động chuyển sang HTTPS), giúp ESP32 kết nối rất nhẹ và không bị lỗi SSL.
+### 5.3. LocalTunnel (Hỗ trợ webhook PayOS về local)
+LocalTunnel cho phép tự cấu hình Subdomain cố định và hỗ trợ kết nối trực tiếp bằng giao thức HTTP thường (không bị tự động chuyển sang HTTPS) giúp nhận webhook PayOS ổn định về máy local.
 
 Chạy lệnh (cần cài đặt NodeJS):
 ```powershell
 npx localtunnel --port 8000 --subdomain bechovang
 ```
-Lấy URL nhận được dạng `http://bechovang.loca.lt` (hoặc cấu hình tên miền tùy chỉnh của bạn) để điền vào `SERVER_BASE_URL` của ESP32 và `PUBLIC_BASE_URL` trong file `.env` của backend.
+Lấy URL nhận được dạng `https://bechovang.loca.lt` (hoặc `http://bechovang.loca.lt`) để điền vào `PUBLIC_BASE_URL` trong file `.env` của backend.
+
+> 💡 **Tách biệt kết nối LAN để tối ưu:**
+> - **`PUBLIC_BASE_URL` trong `.env`**: Điền URL của localtunnel (ví dụ `https://bechovang.loca.lt`) để cổng PayOS bên ngoài Internet gọi được webhook về máy tính của bạn.
+> - **`SERVER_BASE_URL` trong `config.h` của ESP32**: Điền IP mạng nội bộ (LAN) của PC (ví dụ `http://192.168.137.1:8000`). Tránh điền URL `.loca.lt` vào ESP32 để dữ liệu không đi vòng qua Internet rồi vòng lại LAN, giúp phản hồi siêu nhanh (<100ms) và tránh lỗi rớt mạng Internet.
 
 ### 5.4. VPS (ổn định, cho production - vd DigitalOcean)
 - Tạo Droplet (Ubuntu), mở port 80/443.

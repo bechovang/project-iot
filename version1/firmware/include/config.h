@@ -6,12 +6,14 @@
 // ============================================================
 
 // --- WiFi (STA - noi mang nha de ra Internet/LAN toi server) ---
-#define WIFI_SSID       "DiepNguyen 5G"
-#define WIFI_PASS       "0906808777"
+#define WIFI_SSID       "thinkbook"
+#define WIFI_PASS       "12345678"
 
 // --- Server backend (FastAPI) tren LAN ---
+//
 //  Vi du PC chay server co IP 192.168.1.4 -> "http://192.168.1.4:8000"
-#define SERVER_BASE_URL "http://bechovang.loca.lt"
+// #define SERVER_BASE_URL "http://bechovang.loca.lt" // phai de http ko co s
+#define SERVER_BASE_URL "http://192.168.137.1:8000" // do bi anh huong boi wifi
 
 // --- Chu ky poll ---
 #define POLL_CURRENT_MS   1500   // hoi don dang cho de hien QR
